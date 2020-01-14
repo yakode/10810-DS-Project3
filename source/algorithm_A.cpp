@@ -1,44 +1,17 @@
 #include <iostream>
 #include <stdlib.h>
-#include <time.h>
 #include "../include/algorithm.h"
 
 using namespace std;
 
-/******************************************************
- * In your algorithm, you can just use the the funcitons
- * listed by TA to get the board information.(functions 
- * 1. ~ 4. are listed in next block)
- * 
- * The STL library functions is not allowed to use.
-******************************************************/
-
-/*************************************************************************
- * 1. int board.get_orbs_num(int row_index, int col_index)
- * 2. int board.get_capacity(int row_index, int col_index)
- * 3. char board.get_cell_color(int row_index, int col_index)
- * 4. void board.print_current_board(int row_index, int col_index, int round)
- * 
- * 1. The function that return the number of orbs in cell(row, col)
- * 2. The function that return the orb capacity of the cell(row, col)
- * 3. The function that return the color fo the cell(row, col)
- * 4. The function that print out the current board statement
-*************************************************************************/
-
+int left_over(Board board, int x, int y){
+	return board.get_capacity(x, y) - board.get_orbs_num(x, y);
+}
 
 void algorithm_A(Board board, Player player, int index[]){
 
-    // cout << board.get_capacity(0, 0) << endl;
-    // cout << board.get_orbs_num(0, 0) << endl;
-    // cout << board.get_cell_color(0, 0) << endl;
-    // board.print_current_board(0, 0, 0);
-
-    //////////// Random Algorithm ////////////
-    // Here is the random algorithm for your reference, you can delete or comment it.
-    //srand(time(NULL));
-	scanf("%d%d",&index[0], &index[1]);
-	return;
-	//
+	//scanf("%d%d",&index[0], &index[1]);
+	//return;
 	
     int row = -1, col;
     int color = player.get_color();
@@ -56,10 +29,12 @@ void algorithm_A(Board board, Player player, int index[]){
 					col_ = j + dy[k];
 				if(row_ < 0 || row_ > 4 || col_ < 0 || col_ > 5) continue;
 				if(board.get_cell_color(row_, col_) == color || board.get_cell_color(row_, col_) == 'w') continue;
-				if( board.get_capacity(i, j) < board.get_capacity(row_, col_) ){
+				if( left_over(board, i, j) <= left_over(board, row_, col_) ){
 					reaction++;
-					if(board.get_capacity(row_, col_) == 1){
-						reaction += board.get_orbs_num(row_, col_);
+					if(left_over(board, row_, col_) == 1){
+							index[0] = i;
+							index[1] = j;
+							return;
 					}
 				}
 			}
@@ -67,8 +42,8 @@ void algorithm_A(Board board, Player player, int index[]){
 				max_reaction = reaction;
 				row = i;
 				col = j;
-			}else if(reaction == max_reaction){
-				if(board.get_capacity(i, j) < board.get_capacity(row, col)){
+			}else if(reaction == max_reaction && reaction != 0){
+				if(left_over(board, i, j) < left_over(board, row, col)){
 					row = i;
 					col = j;
 				}
@@ -90,11 +65,6 @@ void algorithm_A(Board board, Player player, int index[]){
 			}
 		}
 	}
-    /*while(1){
-        row = rand() % 5;
-        col = rand() % 6;
-        if(board.get_cell_color(row, col) == color || board.get_cell_color(row, col) == 'w') break;
-    }*/
 
     index[0] = row;
     index[1] = col;
